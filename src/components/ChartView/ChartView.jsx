@@ -27,8 +27,17 @@ const ChartView = ({
   onMouseLeave,
   onClick,
   setHoveredPoint,
+  // NEW PROPS - Add these for functionality
+  adjustedData, // This includes display positions for overlapping points
+  onDotClick, // Handle dot click events
+  dotLabels, // For displaying company abbreviations on dots
+  xScale, // Scaling function for X axis
+  yScale, // Scaling function for Y axis
 }) => {
-  const xScale = (value) => {
+  // Calculate scaling functions if not provided as props
+  const getXScale = (value) => {
+    if (xScale) return xScale(value);
+
     const xMin = 80000;
     const xMax = 240000;
     return (
@@ -38,7 +47,9 @@ const ChartView = ({
     );
   };
 
-  const yScale = (value) => {
+  const getYScale = (value) => {
+    if (yScale) return yScale(value);
+
     const yMin = 80000;
     const yMax = 240000;
     return (
@@ -47,6 +58,31 @@ const ChartView = ({
       ((value - yMin) / (yMax - yMin)) *
         (chartHeight - margin.top - margin.bottom)
     );
+  };
+
+  // Use provided scaling functions or fall back to internal ones
+  const currentXScale = getXScale;
+  const currentYScale = getYScale;
+
+  // Handle dot click
+  const handleDotClick = (e, point) => {
+    e.stopPropagation();
+    if (onDotClick) {
+      onDotClick(e, point);
+    } else if (point.link && point.link !== "#") {
+      // Fallback: open link directly if onDotClick not provided
+      window.open(point.link, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  // Handle chart area click
+  const handleChartClick = () => {
+    if (onClick) {
+      onClick();
+    } else if (hoveredPoint && hoveredPoint.link && hoveredPoint.link !== "#") {
+      // Fallback: open link for hovered point
+      window.open(hoveredPoint.link, "_blank", "noopener,noreferrer");
+    }
   };
 
   const xTicks = [
@@ -142,20 +178,28 @@ const ChartView = ({
         💡 Hover over any point to see detailed salary information
         <br />
         <small>
-          Click anywhere on the chart to open the job posting for the currently
-          hovered position
+          Click on any point to open the job posting for that position
         </small>
         <br />
         <small>
           <strong>Color intensity:</strong> Darker colors = farther from market
           average, Lighter colors = closer to average
         </small>
+        {dotLabels && dotLabels["frontline"] === "F2" && (
+          <>
+            <br />
+            <small>
+              <strong>Dot labels:</strong> First two letters of company name (F2
+              = Frontline, F1 = FloQast)
+            </small>
+          </>
+        )}
       </div>
 
       {/* Main Chart */}
       <div
         className="chart-container"
-        onClick={onClick}
+        onClick={handleChartClick}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
       >
@@ -170,34 +214,34 @@ const ChartView = ({
           {/* Background Quadrants */}
           <g>
             <rect
-              x={xScale(avgMinSalary)}
+              x={currentXScale(avgMinSalary)}
               y={margin.top}
-              width={chartWidth - margin.right - xScale(avgMinSalary)}
-              height={yScale(avgMaxSalary) - margin.top}
+              width={chartWidth - margin.right - currentXScale(avgMinSalary)}
+              height={currentYScale(avgMaxSalary) - margin.top}
               fill="#dbeafe"
               fillOpacity="0.5"
             />
             <rect
               x={margin.left}
-              y={yScale(avgMaxSalary)}
-              width={xScale(avgMinSalary) - margin.left}
-              height={chartHeight - margin.bottom - yScale(avgMaxSalary)}
+              y={currentYScale(avgMaxSalary)}
+              width={currentXScale(avgMinSalary) - margin.left}
+              height={chartHeight - margin.bottom - currentYScale(avgMaxSalary)}
               fill="#fee2e2"
               fillOpacity="0.5"
             />
             <rect
               x={margin.left}
               y={margin.top}
-              width={xScale(avgMinSalary) - margin.left}
-              height={yScale(avgMaxSalary) - margin.top}
+              width={currentXScale(avgMinSalary) - margin.left}
+              height={currentYScale(avgMaxSalary) - margin.top}
               fill="#fef3c7"
               fillOpacity="0.5"
             />
             <rect
-              x={xScale(avgMinSalary)}
-              y={yScale(avgMaxSalary)}
-              width={chartWidth - margin.right - xScale(avgMinSalary)}
-              height={chartHeight - margin.bottom - yScale(avgMaxSalary)}
+              x={currentXScale(avgMinSalary)}
+              y={currentYScale(avgMaxSalary)}
+              width={chartWidth - margin.right - currentXScale(avgMinSalary)}
+              height={chartHeight - margin.bottom - currentYScale(avgMaxSalary)}
               fill="#fef3c7"
               fillOpacity="0.5"
             />
@@ -205,9 +249,12 @@ const ChartView = ({
 
           {/* Purple Zone */}
           <circle
-            cx={xScale(avgMinSalary)}
-            cy={yScale(avgMaxSalary)}
-            r={xScale(avgMinSalary + purpleZoneRadius) - xScale(avgMinSalary)}
+            cx={currentXScale(avgMinSalary)}
+            cy={currentYScale(avgMaxSalary)}
+            r={
+              currentXScale(avgMinSalary + purpleZoneRadius) -
+              currentXScale(avgMinSalary)
+            }
             fill="#8b5cf6"
             fillOpacity="0.1"
             stroke="#8b5cf6"
@@ -220,9 +267,9 @@ const ChartView = ({
             {xTicks.map((tick) => (
               <line
                 key={`xgrid-${tick}`}
-                x1={xScale(tick)}
+                x1={currentXScale(tick)}
                 y1={margin.top}
-                x2={xScale(tick)}
+                x2={currentXScale(tick)}
                 y2={chartHeight - margin.bottom}
                 stroke="#e0e0e0"
                 strokeWidth="1"
@@ -233,9 +280,9 @@ const ChartView = ({
               <line
                 key={`ygrid-${tick}`}
                 x1={margin.left}
-                y1={yScale(tick)}
+                y1={currentYScale(tick)}
                 x2={chartWidth - margin.right}
-                y2={yScale(tick)}
+                y2={currentYScale(tick)}
                 stroke="#e0e0e0"
                 strokeWidth="1"
                 strokeDasharray="3 3"
@@ -247,9 +294,9 @@ const ChartView = ({
           {showAverageLines && (
             <g className="average-lines">
               <line
-                x1={xScale(avgMinSalary)}
+                x1={currentXScale(avgMinSalary)}
                 y1={margin.top}
-                x2={xScale(avgMinSalary)}
+                x2={currentXScale(avgMinSalary)}
                 y2={chartHeight - margin.bottom}
                 stroke="#8b5cf6"
                 strokeWidth="2"
@@ -257,34 +304,34 @@ const ChartView = ({
               />
               <line
                 x1={margin.left}
-                y1={yScale(avgMaxSalary)}
+                y1={currentYScale(avgMaxSalary)}
                 x2={chartWidth - margin.right}
-                y2={yScale(avgMaxSalary)}
+                y2={currentYScale(avgMaxSalary)}
                 stroke="#8b5cf6"
                 strokeWidth="2"
                 strokeDasharray="6 3"
               />
               <g>
                 <line
-                  x1={xScale(avgMinSalary) - 6}
-                  y1={yScale(avgMaxSalary)}
-                  x2={xScale(avgMinSalary) + 6}
-                  y2={yScale(avgMaxSalary)}
+                  x1={currentXScale(avgMinSalary) - 6}
+                  y1={currentYScale(avgMaxSalary)}
+                  x2={currentXScale(avgMinSalary) + 6}
+                  y2={currentYScale(avgMaxSalary)}
                   stroke="#8b5cf6"
                   strokeWidth="3"
                 />
                 <line
-                  x1={xScale(avgMinSalary)}
-                  y1={yScale(avgMaxSalary) - 6}
-                  x2={xScale(avgMinSalary)}
-                  y2={yScale(avgMaxSalary) + 6}
+                  x1={currentXScale(avgMinSalary)}
+                  y1={currentYScale(avgMaxSalary) - 6}
+                  x2={currentXScale(avgMinSalary)}
+                  y2={currentYScale(avgMaxSalary) + 6}
                   stroke="#8b5cf6"
                   strokeWidth="3"
                 />
               </g>
               <text
-                x={xScale(avgMinSalary) + 15}
-                y={yScale(avgMaxSalary) - 15}
+                x={currentXScale(avgMinSalary) + 15}
+                y={currentYScale(avgMaxSalary) - 15}
                 fontSize="14"
                 fontWeight="bold"
                 fill="#8b5cf6"
@@ -298,9 +345,9 @@ const ChartView = ({
           {showMedianLines && (
             <g className="median-lines">
               <line
-                x1={xScale(medianMinSalary)}
+                x1={currentXScale(medianMinSalary)}
                 y1={margin.top}
-                x2={xScale(medianMinSalary)}
+                x2={currentXScale(medianMinSalary)}
                 y2={chartHeight - margin.bottom}
                 stroke="#10b981"
                 strokeWidth="2"
@@ -308,34 +355,34 @@ const ChartView = ({
               />
               <line
                 x1={margin.left}
-                y1={yScale(medianMaxSalary)}
+                y1={currentYScale(medianMaxSalary)}
                 x2={chartWidth - margin.right}
-                y2={yScale(medianMaxSalary)}
+                y2={currentYScale(medianMaxSalary)}
                 stroke="#10b981"
                 strokeWidth="2"
                 strokeDasharray="6 3"
               />
               <g>
                 <line
-                  x1={xScale(medianMinSalary) - 6}
-                  y1={yScale(medianMaxSalary) - 6}
-                  x2={xScale(medianMinSalary) + 6}
-                  y2={yScale(medianMaxSalary) + 6}
+                  x1={currentXScale(medianMinSalary) - 6}
+                  y1={currentYScale(medianMaxSalary) - 6}
+                  x2={currentXScale(medianMinSalary) + 6}
+                  y2={currentYScale(medianMaxSalary) + 6}
                   stroke="#10b981"
                   strokeWidth="3"
                 />
                 <line
-                  x1={xScale(medianMinSalary) - 6}
-                  y1={yScale(medianMaxSalary) + 6}
-                  x2={xScale(medianMinSalary) + 6}
-                  y2={yScale(medianMaxSalary) - 6}
+                  x1={currentXScale(medianMinSalary) - 6}
+                  y1={currentYScale(medianMaxSalary) + 6}
+                  x2={currentXScale(medianMinSalary) + 6}
+                  y2={currentYScale(medianMaxSalary) - 6}
                   stroke="#10b981"
                   strokeWidth="3"
                 />
               </g>
               <text
-                x={xScale(medianMinSalary) + 15}
-                y={yScale(medianMaxSalary) + 25}
+                x={currentXScale(medianMinSalary) + 15}
+                y={currentYScale(medianMaxSalary) + 25}
                 fontSize="14"
                 fontWeight="bold"
                 fill="#10b981"
@@ -349,17 +396,17 @@ const ChartView = ({
           {showDiagonalLine && (
             <g className="diagonal-line">
               <line
-                x1={xScale(80000)}
-                y1={yScale(80000)}
-                x2={xScale(240000)}
-                y2={yScale(240000)}
+                x1={currentXScale(80000)}
+                y1={currentYScale(80000)}
+                x2={currentXScale(240000)}
+                y2={currentYScale(240000)}
                 stroke="#999"
                 strokeWidth="1"
                 strokeDasharray="5 5"
               />
               <text
-                x={xScale(160000)}
-                y={yScale(160000) - 20}
+                x={currentXScale(160000)}
+                y={currentYScale(160000) - 20}
                 textAnchor="middle"
                 fontSize="12"
                 fill="#666"
@@ -391,7 +438,7 @@ const ChartView = ({
           {xTicks.map((tick) => (
             <text
               key={`xlabel-${tick}`}
-              x={xScale(tick)}
+              x={currentXScale(tick)}
               y={chartHeight - margin.bottom + 25}
               textAnchor="middle"
               fontSize="13"
@@ -404,7 +451,7 @@ const ChartView = ({
             <text
               key={`ylabel-${tick}`}
               x={margin.left - 15}
-              y={yScale(tick)}
+              y={currentYScale(tick)}
               textAnchor="end"
               fontSize="13"
               fill="#374151"
@@ -437,7 +484,8 @@ const ChartView = ({
           </text>
 
           {/* Data Points - Comparison Jobs */}
-          {enrichedData
+          {/* Use adjustedData if provided, otherwise fall back to enrichedData */}
+          {(adjustedData || enrichedData)
             .filter((job) => job.type === "comparison")
             .map((point) => {
               const strokeColor =
@@ -451,18 +499,26 @@ const ChartView = ({
                     : "#6d28d9"
                   : point.marketPosition.color;
 
-              const xPos = xScale(point.displayMinSalary || point.minSalary);
-              const yPos = yScale(point.displayMaxSalary || point.maxSalary);
+              const xPos = currentXScale(
+                point.displayMinSalary || point.minSalary
+              );
+              const yPos = currentYScale(
+                point.displayMaxSalary || point.maxSalary
+              );
 
               return (
                 <g key={point.id} className="data-point">
+                  {/* Invisible larger circle for better click target */}
                   <circle
                     cx={xPos}
                     cy={yPos}
                     r="25"
                     fill="transparent"
                     className="point-hit-area"
+                    onClick={(e) => handleDotClick(e, point)}
+                    style={{ cursor: "pointer" }}
                   />
+                  {/* Visible dot */}
                   <circle
                     cx={xPos}
                     cy={yPos}
@@ -472,7 +528,10 @@ const ChartView = ({
                     stroke={strokeColor}
                     strokeWidth={hoveredPoint?.id === point.id ? "3" : "2"}
                     className="point-circle"
+                    onClick={(e) => handleDotClick(e, point)}
+                    style={{ cursor: "pointer" }}
                   />
+                  {/* Dot label - use dotLabel from point or fallback */}
                   <text
                     x={xPos}
                     y={yPos}
@@ -483,14 +542,17 @@ const ChartView = ({
                     fill="white"
                     className="point-label"
                   >
-                    {point.dotLabel}
+                    {point.dotLabel ||
+                      (dotLabels && dotLabels[point.id]) ||
+                      "??"}
                   </text>
+                  {/* Overlap indicator line */}
                   {point.isOverlapping && (
                     <line
                       x1={xPos}
                       y1={yPos}
-                      x2={xScale(point.minSalary)}
-                      y2={yScale(point.maxSalary)}
+                      x2={currentXScale(point.minSalary)}
+                      y2={currentYScale(point.maxSalary)}
                       stroke={point.dotColor}
                       strokeWidth="1"
                       strokeDasharray="2 2"
@@ -504,18 +566,26 @@ const ChartView = ({
 
           {/* Your Job Data Points */}
           {yourJobData.map((point) => {
-            const xPos = xScale(point.displayMinSalary || point.minSalary);
-            const yPos = yScale(point.displayMaxSalary || point.maxSalary);
+            const xPos = currentXScale(
+              point.displayMinSalary || point.minSalary
+            );
+            const yPos = currentYScale(
+              point.displayMaxSalary || point.maxSalary
+            );
 
             return (
               <g key={point.id} className="your-job-point">
+                {/* Invisible larger circle for better click target */}
                 <circle
                   cx={xPos}
                   cy={yPos}
                   r="40"
                   fill="transparent"
                   className="point-hit-area"
+                  onClick={(e) => handleDotClick(e, point)}
+                  style={{ cursor: "pointer" }}
                 />
+                {/* Visible dot */}
                 <circle
                   cx={xPos}
                   cy={yPos}
@@ -525,7 +595,10 @@ const ChartView = ({
                   stroke={hoveredPoint?.id === point.id ? "#145c32" : "#1e7e34"}
                   strokeWidth={hoveredPoint?.id === point.id ? "4" : "3"}
                   className="point-circle your-job-circle"
+                  onClick={(e) => handleDotClick(e, point)}
+                  style={{ cursor: "pointer" }}
                 />
+                {/* Dot label */}
                 <text
                   x={xPos}
                   y={yPos}
@@ -536,7 +609,7 @@ const ChartView = ({
                   fill="white"
                   className="point-label"
                 >
-                  PR
+                  {point.dotLabel || "PR"}
                 </text>
               </g>
             );
@@ -546,10 +619,10 @@ const ChartView = ({
           {hoveredPoint && (
             <>
               <circle
-                cx={xScale(
+                cx={currentXScale(
                   hoveredPoint.displayMinSalary || hoveredPoint.minSalary
                 )}
-                cy={yScale(
+                cy={currentYScale(
                   hoveredPoint.displayMaxSalary || hoveredPoint.maxSalary
                 )}
                 r={hoveredPoint.type === "yourJob" ? "20" : "15"}
@@ -560,10 +633,10 @@ const ChartView = ({
                 className="hover-ring"
               />
               <circle
-                cx={xScale(
+                cx={currentXScale(
                   hoveredPoint.displayMinSalary || hoveredPoint.minSalary
                 )}
-                cy={yScale(
+                cy={currentYScale(
                   hoveredPoint.displayMaxSalary || hoveredPoint.maxSalary
                 )}
                 r={hoveredPoint.type === "yourJob" ? "25" : "20"}
