@@ -280,49 +280,173 @@ export const jobData = [
   },
 ];
 
-export const geographicZones = {
-  "Zone A": {
-    color: "#dc2626",
-    bgColor: "#fee2e2",
-    description: "San Francisco Bay Area",
-    salaryAdjustment: "+30%",
-    cities: ["San Francisco", "San Jose", "Palo Alto", "Oakland"],
-    salaryRange: "",
-    keyEmployers: ["Google", "Apple", "Facebook", "Netflix", "Uber", "Airbnb"],
-    avgSalaryPremium: 1.3,
+// Geographic zones for all three companies
+export const companyGeographicZones = {
+  Atlassian: {
+    "Zone A": {
+      color: "#dc2626",
+      bgColor: "#fee2e2",
+      description: "San Francisco Bay Area",
+      cities: ["San Francisco Bay Area"],
+    },
+    "Zone B": {
+      color: "#2563eb",
+      bgColor: "#dbeafe",
+      description: "High Cost Metro Areas",
+      cities: [
+        "Boston",
+        "Los Angeles",
+        "New York Tri-State Area",
+        "Sacramento",
+        "San Diego",
+        "Seattle",
+        "Washington D.C.",
+      ],
+    },
+    "Zone C": {
+      color: "#16a34a",
+      bgColor: "#dcfce7",
+      description:
+        "All other states and metropolitan areas not mentioned above",
+      cities: ["All other states and metropolitan areas not mentioned above"],
+    },
   },
-  "Zone B": {
-    color: "#2563eb",
-    bgColor: "#dbeafe",
-    description: "High Cost Metro Areas",
-    salaryAdjustment: "+15-25%",
-    cities: [
-      "Boston, MA",
-      "Los Angeles, CA",
-      "New York, NY",
-      "Sacramento, CA",
-      "San Diego, CA",
-      "Seattle, WA",
-      "Washington D.C.",
-    ],
-    salaryRange: "",
-    keyEmployers: [
-      "Microsoft",
-      "Amazon",
-      "Spotify",
-      "Bloomberg",
-      "Capital One",
-    ],
-    avgSalaryPremium: 1.2,
+  "Snap Inc.": {
+    "Zone A": {
+      color: "#dc2626",
+      bgColor: "#fee2e2",
+      description: "California, Washington, New York City",
+      cities: ["California", "Washington", "New York City"],
+    },
+    "Zone B": {
+      color: "#2563eb",
+      bgColor: "#dbeafe",
+      description: "Select Major Cities",
+      cities: ["Austin, TX", "Boulder, CO", "Washington DC", "Chicago, IL"],
+    },
+    "Zone C": {
+      color: "#16a34a",
+      bgColor: "#dcfce7",
+      description: "All other states and metros not listed above",
+      cities: ["All other states and metros not listed above"],
+    },
   },
-  "Zone C": {
-    color: "#16a34a",
-    bgColor: "#dcfce7",
-    description: "All Other Areas",
-    salaryAdjustment: "Market Rate",
-    cities: ["All other states and metropolitan areas"],
-    salaryRange: "",
-    keyEmployers: ["Various local and remote companies"],
-    avgSalaryPremium: 1.0,
+  Asana: {
+    "Zone A": {
+      color: "#dc2626",
+      bgColor: "#fee2e2",
+      description: "San Francisco Bay Area, NY/NJ/CT Metro Area",
+      cities: [
+        "San Francisco Bay Area, CA",
+        "New York City, NY",
+        "Long Island, NY",
+        "Newark, NJ",
+        "Stamford, CT",
+      ],
+    },
+    "Zone B": {
+      color: "#2563eb",
+      bgColor: "#dbeafe",
+      description: "Major Metro Areas",
+      cities: [
+        "Connecticut (non-NYC Area)",
+        "New Jersey (non-NYC Area)",
+        "Albany, NY",
+        "Boston, MA",
+        "Chicago, IL",
+        "Denver, CO",
+        "Los Angeles, CA",
+        "Miami, FL",
+        "Portland, OR",
+        "Sacramento, CA",
+        "San Diego, CA",
+        "Seattle, WA",
+        "Washington, D.C.",
+      ],
+    },
+    "Zone C": {
+      color: "#16a34a",
+      bgColor: "#dcfce7",
+      description: "All other states and metros not listed above",
+      cities: ["All other states and metros not listed above"],
+    },
   },
+};
+
+// City coordinates for all companies
+export const companyCityCoordinates = {
+  Atlassian: [
+    // Zone A - San Francisco Bay Area
+    {
+      name: "San Francisco",
+      coordinates: [-122.4194, 37.7749],
+      zone: "Zone A",
+    },
+    { name: "San Jose", coordinates: [-121.8863, 37.3382], zone: "Zone A" },
+    { name: "Oakland", coordinates: [-122.2711, 37.8044], zone: "Zone A" },
+    { name: "Palo Alto", coordinates: [-122.143, 37.4419], zone: "Zone A" },
+    {
+      name: "Mountain View",
+      coordinates: [-122.0838, 37.3861],
+      zone: "Zone A",
+    },
+
+    // Zone B Cities
+    { name: "Boston", coordinates: [-71.0589, 42.3601], zone: "Zone B" },
+    { name: "Los Angeles", coordinates: [-118.2437, 34.0522], zone: "Zone B" },
+    { name: "New York", coordinates: [-74.006, 40.7128], zone: "Zone B" },
+    { name: "Sacramento", coordinates: [-121.4944, 38.5816], zone: "Zone B" },
+    { name: "San Diego", coordinates: [-117.1611, 32.7157], zone: "Zone B" },
+    { name: "Seattle", coordinates: [-122.3321, 47.6062], zone: "Zone B" },
+    { name: "Washington DC", coordinates: [-77.0369, 38.9072], zone: "Zone B" },
+  ],
+  "Snap Inc.": [
+    // Zone A
+    {
+      name: "California",
+      coordinates: [-119.4179, 36.7783],
+      zone: "Zone A",
+      isState: true,
+    },
+    {
+      name: "Washington",
+      coordinates: [-120.7401, 47.7511],
+      zone: "Zone A",
+      isState: true,
+    },
+    { name: "New York", coordinates: [-74.006, 40.7128], zone: "Zone A" },
+
+    // Zone B
+    { name: "Austin", coordinates: [-97.7431, 30.2672], zone: "Zone B" },
+    { name: "Boulder", coordinates: [-105.2705, 40.015], zone: "Zone B" },
+    { name: "Washington DC", coordinates: [-77.0369, 38.9072], zone: "Zone B" },
+    { name: "Chicago", coordinates: [-87.6298, 41.8781], zone: "Zone B" },
+  ],
+  Asana: [
+    // Zone A
+    {
+      name: "San Francisco",
+      coordinates: [-122.4194, 37.7749],
+      zone: "Zone A",
+    },
+    { name: "San Jose", coordinates: [-121.8863, 37.3382], zone: "Zone A" },
+    { name: "Oakland", coordinates: [-122.2711, 37.8044], zone: "Zone A" },
+    { name: "New York", coordinates: [-74.006, 40.7128], zone: "Zone A" },
+    { name: "Long Island", coordinates: [-73.102, 40.83], zone: "Zone A" },
+    { name: "Newark", coordinates: [-74.1724, 40.7357], zone: "Zone A" },
+    { name: "Stamford", coordinates: [-73.5387, 41.0534], zone: "Zone A" },
+
+    // Zone B
+    { name: "Albany", coordinates: [-73.7562, 42.6526], zone: "Zone B" },
+    { name: "Boston", coordinates: [-71.0589, 42.3601], zone: "Zone B" },
+    { name: "Chicago", coordinates: [-87.6298, 41.8781], zone: "Zone B" },
+    { name: "Denver", coordinates: [-104.9903, 39.7392], zone: "Zone B" },
+    { name: "Los Angeles", coordinates: [-118.2437, 34.0522], zone: "Zone B" },
+    { name: "Miami", coordinates: [-80.1918, 25.7617], zone: "Zone B" },
+    { name: "Portland", coordinates: [-122.6784, 45.5152], zone: "Zone B" },
+    { name: "Sacramento", coordinates: [-121.4944, 38.5816], zone: "Zone B" },
+    { name: "San Diego", coordinates: [-117.1611, 32.7157], zone: "Zone B" },
+    { name: "Seattle", coordinates: [-122.3321, 47.6062], zone: "Zone B" },
+    { name: "Washington DC", coordinates: [-77.0369, 38.9072], zone: "Zone B" },
+  ],
 };

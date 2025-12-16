@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   ComposableMap,
   Geographies,
@@ -7,141 +7,239 @@ import {
 } from "react-simple-maps";
 import "./GeographicView.css";
 
-const GeographicView = ({ geographicZones, avgMinSalary, avgMaxSalary }) => {
+const GeographicView = ({
+  companyGeographicZones,
+  companyCityCoordinates,
+  initialCompany = "Atlassian",
+}) => {
+  const [selectedCompany, setSelectedCompany] = useState(initialCompany);
   const [hoveredZone, setHoveredZone] = useState(null);
   const [hoveredState, setHoveredState] = useState(null);
+  const [hoveredCity, setHoveredCity] = useState(null);
 
-  // Update salary ranges in zones
-  const updatedZones = { ...geographicZones };
-  Object.keys(updatedZones).forEach((zone) => {
-    updatedZones[zone].salaryRange = `$${Math.round(
-      avgMinSalary * updatedZones[zone].avgSalaryPremium
-    ).toLocaleString()} - $${Math.round(
-      avgMaxSalary * updatedZones[zone].avgSalaryPremium
-    ).toLocaleString()}`;
-  });
+  const geographicZones = companyGeographicZones[selectedCompany];
+  const cityMarkers = companyCityCoordinates[selectedCompany];
 
-  const zoneStatistics = {
-    "Zone A": {
-      count: 8,
-      avgMinSalary: Math.round(avgMinSalary * 1.3),
-      avgMaxSalary: Math.round(avgMaxSalary * 1.3),
-    },
-    "Zone B": {
-      count: 15,
-      avgMinSalary: Math.round(avgMinSalary * 1.2),
-      avgMaxSalary: Math.round(avgMaxSalary * 1.2),
-    },
-    "Zone C": {
-      count: 7,
-      avgMinSalary: Math.round(avgMinSalary * 1.0),
-      avgMaxSalary: Math.round(avgMaxSalary * 1.0),
-    },
-  };
+  // Define state zones for each company
+  const companyStateZones = useMemo(
+    () => ({
+      Atlassian: {
+        "Zone A": [], // No states in Zone A for Atlassian
+        "Zone B": ["New York", "New Jersey", "Connecticut", "Pennsylvania"],
+        "Zone C": [
+          "Alabama",
+          "Alaska",
+          "Arizona",
+          "Arkansas",
+          "California",
+          "Colorado",
+          "Delaware",
+          "Florida",
+          "Georgia",
+          "Hawaii",
+          "Idaho",
+          "Illinois",
+          "Indiana",
+          "Iowa",
+          "Kansas",
+          "Kentucky",
+          "Louisiana",
+          "Maine",
+          "Maryland",
+          "Massachusetts",
+          "Michigan",
+          "Minnesota",
+          "Mississippi",
+          "Missouri",
+          "Montana",
+          "Nebraska",
+          "Nevada",
+          "New Hampshire",
+          "New Mexico",
+          "North Carolina",
+          "North Dakota",
+          "Ohio",
+          "Oklahoma",
+          "Oregon",
+          "Rhode Island",
+          "South Carolina",
+          "South Dakota",
+          "Tennessee",
+          "Texas",
+          "Utah",
+          "Vermont",
+          "Virginia",
+          "Washington",
+          "West Virginia",
+          "Wisconsin",
+          "Wyoming",
+          "District of Columbia",
+        ],
+      },
+      "Snap Inc.": {
+        "Zone A": ["California", "Washington"],
+        "Zone B": [], // No states in Zone B for Snap
+        "Zone C": [
+          "Alabama",
+          "Alaska",
+          "Arizona",
+          "Arkansas",
+          "Colorado",
+          "Connecticut",
+          "Delaware",
+          "Florida",
+          "Georgia",
+          "Hawaii",
+          "Idaho",
+          "Illinois",
+          "Indiana",
+          "Iowa",
+          "Kansas",
+          "Kentucky",
+          "Louisiana",
+          "Maine",
+          "Maryland",
+          "Massachusetts",
+          "Michigan",
+          "Minnesota",
+          "Mississippi",
+          "Missouri",
+          "Montana",
+          "Nebraska",
+          "Nevada",
+          "New Hampshire",
+          "New Jersey",
+          "New Mexico",
+          "New York",
+          "North Carolina",
+          "North Dakota",
+          "Ohio",
+          "Oklahoma",
+          "Oregon",
+          "Pennsylvania",
+          "Rhode Island",
+          "South Carolina",
+          "South Dakota",
+          "Tennessee",
+          "Texas",
+          "Utah",
+          "Vermont",
+          "Virginia",
+          "West Virginia",
+          "Wisconsin",
+          "Wyoming",
+          "District of Columbia",
+        ],
+      },
+      Asana: {
+        "Zone A": [], // No Zone A states for Asana
+        "Zone B": ["Connecticut", "New Jersey"],
+        "Zone C": [
+          "Alabama",
+          "Alaska",
+          "Arizona",
+          "Arkansas",
+          "California",
+          "Colorado",
+          "Delaware",
+          "Florida",
+          "Georgia",
+          "Hawaii",
+          "Idaho",
+          "Illinois",
+          "Indiana",
+          "Iowa",
+          "Kansas",
+          "Kentucky",
+          "Louisiana",
+          "Maine",
+          "Maryland",
+          "Massachusetts",
+          "Michigan",
+          "Minnesota",
+          "Mississippi",
+          "Missouri",
+          "Montana",
+          "Nebraska",
+          "Nevada",
+          "New Hampshire",
+          "New Mexico",
+          "New York",
+          "North Carolina",
+          "North Dakota",
+          "Ohio",
+          "Oklahoma",
+          "Oregon",
+          "Pennsylvania",
+          "Rhode Island",
+          "South Carolina",
+          "South Dakota",
+          "Tennessee",
+          "Texas",
+          "Utah",
+          "Vermont",
+          "Virginia",
+          "Washington",
+          "West Virginia",
+          "Wisconsin",
+          "Wyoming",
+          "District of Columbia",
+        ],
+      },
+    }),
+    []
+  );
 
-  // Pay zone logic
-  const zoneAStates = ["California"];
-  const zoneBStates = [
-    "Washington",
-    "Oregon",
-    "New York",
-    "Massachusetts",
-    "Connecticut",
-    "Rhode Island",
-    "New Hampshire",
-    "Maryland",
-    "District of Columbia",
-    "Virginia",
-    "New Jersey",
-    "Pennsylvania",
-    "Illinois",
-    "Texas",
-    "Colorado",
-    "Georgia",
-  ];
+  // Get the zone for a state based on the selected company
+  const getStateZone = (stateName) => {
+    const stateZones = companyStateZones[selectedCompany];
 
-  // City markers
-  const cityMarkers = [
-    { name: "Seattle", coordinates: [-122.3321, 47.6062], zone: "B" },
-    { name: "Portland", coordinates: [-122.6784, 45.5152], zone: "B" },
-    { name: "San Francisco", coordinates: [-122.4194, 37.7749], zone: "A" },
-    { name: "San Jose", coordinates: [-121.8863, 37.3382], zone: "A" },
-    { name: "Los Angeles", coordinates: [-118.2437, 34.0522], zone: "B" },
-    { name: "San Diego", coordinates: [-117.1611, 32.7157], zone: "B" },
-    { name: "Sacramento", coordinates: [-121.4944, 38.5816], zone: "B" },
-    { name: "New York City", coordinates: [-74.006, 40.7128], zone: "B" },
-    { name: "Boston", coordinates: [-71.0589, 42.3601], zone: "B" },
-    { name: "Washington DC", coordinates: [-77.0369, 38.9072], zone: "B" },
-    { name: "Chicago", coordinates: [-87.6298, 41.8781], zone: "B" },
-    { name: "Austin", coordinates: [-97.7431, 30.2672], zone: "B" },
-    { name: "Denver", coordinates: [-104.9903, 39.7392], zone: "B" },
-    { name: "Atlanta", coordinates: [-84.388, 33.749], zone: "B" },
-  ];
-
-  const getFillColor = (stateName) => {
-    if (zoneAStates.includes(stateName)) return updatedZones["Zone A"].color;
-    if (zoneBStates.includes(stateName)) return updatedZones["Zone B"].color;
-    return updatedZones["Zone C"].color;
-  };
-
-  const getZoneLabel = (stateName) => {
-    if (zoneAStates.includes(stateName)) return "Zone A";
-    if (zoneBStates.includes(stateName)) return "Zone B";
+    if (stateZones["Zone A"].includes(stateName)) return "Zone A";
+    if (stateZones["Zone B"].includes(stateName)) return "Zone B";
     return "Zone C";
+  };
+
+  // Get fill color for a state
+  const getFillColor = (stateName) => {
+    const zone = getStateZone(stateName);
+    return geographicZones[zone]?.color || "#e5e5e5";
+  };
+
+  // Get company description
+  const getCompanyDescription = () => {
+    return `${selectedCompany} adjusts salaries based on geographic location. Below are the 3 zones specified by ${selectedCompany}.`;
   };
 
   return (
     <div className="geographic-view">
       <div className="geographic-container">
-        <h2>🗺️ Geographic Pay Zones</h2>
+        <h2>Geographic Pay Zones Comparison</h2>
 
-        <div className="zone-intro">
-          <p>
-            Tech companies adjust salaries based on geographic location to
-            account for cost of living differences. Understanding these zones
-            helps you evaluate whether a salary offer is competitive for a
-            specific location.
-          </p>
+        {/* Company Selector */}
+        <div className="company-selector">
+          <h3>Select Company</h3>
+          <div className="company-buttons">
+            {Object.keys(companyGeographicZones).map((company) => (
+              <button
+                key={company}
+                className={`company-button ${
+                  selectedCompany === company ? "active" : ""
+                }`}
+                onClick={() => setSelectedCompany(company)}
+              >
+                {company}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Zone Legend */}
-        <div className="zone-legend">
-          {Object.entries(updatedZones).map(([zone, data]) => (
-            <div
-              key={zone}
-              className={`zone-card ${hoveredZone === zone ? "hovered" : ""}`}
-              style={{
-                backgroundColor: data.bgColor,
-                borderColor: data.color,
-              }}
-              onMouseEnter={() => setHoveredZone(zone)}
-              onMouseLeave={() => setHoveredZone(null)}
-            >
-              <div className="zone-header">
-                <div
-                  className="zone-color"
-                  style={{ backgroundColor: data.color }}
-                ></div>
-                <h3 style={{ color: data.color }}>{zone}</h3>
-              </div>
-              <p className="zone-description">{data.description}</p>
-              <p className="zone-adjustment">
-                <strong>Salary Adjustment:</strong> {data.salaryAdjustment}
-              </p>
-              <p className="zone-range">
-                <strong>Estimated Salary Range:</strong> {data.salaryRange}
-              </p>
-              <p className="zone-cities">
-                <strong>Key Areas:</strong> {data.cities.slice(0, 3).join(", ")}
-                {data.cities.length > 3 && "..."}
-              </p>
-            </div>
-          ))}
+        <div className="zone-intro">
+          <p>{getCompanyDescription()}</p>
         </div>
 
         {/* US Map Visualization */}
         <div className="map-section">
-          <h3>US Geographic Pay Zone Map</h3>
+          <h3>{selectedCompany} Pay Zone Map</h3>
           <div className="map-container">
             <ComposableMap
               projection="geoAlbersUsa"
@@ -157,12 +255,13 @@ const GeographicView = ({ geographicZones, avgMinSalary, avgMaxSalary }) => {
                 {({ geographies }) =>
                   geographies.map((geo) => {
                     const stateName = geo.properties.name;
+                    const fillColor = getFillColor(stateName);
 
                     return (
                       <Geography
                         key={geo.rsmKey}
                         geography={geo}
-                        fill={getFillColor(stateName)}
+                        fill={fillColor}
                         stroke="#ffffff"
                         strokeWidth={1}
                         style={{
@@ -186,48 +285,63 @@ const GeographicView = ({ geographicZones, avgMinSalary, avgMaxSalary }) => {
                 }
               </Geographies>
 
-              {/* City markers */}
-              {cityMarkers.map(({ name, coordinates, zone }) => (
-                <Marker key={name} coordinates={coordinates}>
+              {/* City markers for ALL companies - BIGGER and MORE READABLE */}
+              {cityMarkers.map((city) => (
+                <Marker
+                  key={`${city.name}-${city.zone}`}
+                  coordinates={city.coordinates}
+                  onMouseEnter={() => setHoveredCity(city)}
+                  onMouseLeave={() => setHoveredCity(null)}
+                >
+                  {/* Bigger circle markers */}
                   <circle
-                    r={zone === "A" ? 5 : 4}
-                    fill={
-                      zone === "A"
-                        ? updatedZones["Zone A"].color
-                        : updatedZones["Zone B"].color
-                    }
+                    r={city.zone === "Zone A" ? 7 : 6} // Increased from 5/4
+                    fill={geographicZones[city.zone]?.color || "#000"}
                     stroke="#ffffff"
-                    strokeWidth={1.5}
+                    strokeWidth={2}
                   />
-                  {zone === "A" && (
-                    <text
-                      textAnchor="middle"
-                      y={-12}
-                      className="city-label"
-                      style={{
-                        fill: updatedZones["Zone A"].color,
-                      }}
-                    >
-                      {name}
-                    </text>
-                  )}
+                  {/* Bigger and bolder city labels */}
+                  <text
+                    textAnchor="middle"
+                    y={city.zone === "Zone A" ? -15 : -14} // Adjusted for bigger font
+                    className="city-label"
+                    style={{
+                      fill: geographicZones[city.zone]?.color || "#000",
+                      fontSize: city.zone === "Zone A" ? "12px" : "11px", // Increased from 10/9
+                      fontWeight: "bold", // Always bold now
+                      fontFamily: "Arial, sans-serif",
+                      textShadow:
+                        "2px 2px 3px white, -2px -2px 3px white, 2px -2px 3px white, -2px 2px 3px white",
+                    }}
+                  >
+                    {city.name.split(",")[0]}
+                  </text>
                 </Marker>
               ))}
             </ComposableMap>
 
-            {/* Hover info */}
+            {/* State hover info */}
             {hoveredState && (
               <div className="map-hover-info">
                 <div className="hover-state">
                   <strong>{hoveredState}</strong>
                   <span className="hover-zone">
-                    {getZoneLabel(hoveredState)}
+                    {getStateZone(hoveredState)}
                   </span>
                 </div>
                 <div className="hover-salary">
-                  Estimated salary:{" "}
-                  {updatedZones[getZoneLabel(hoveredState)]?.salaryRange ||
-                    "Market rate"}
+                  Zone: {getStateZone(hoveredState)} -{" "}
+                  {geographicZones[getStateZone(hoveredState)]?.description}
+                </div>
+              </div>
+            )}
+
+            {/* City hover info */}
+            {hoveredCity && (
+              <div className="map-hover-info">
+                <div className="hover-state">
+                  <strong>{hoveredCity.name}</strong>
+                  <span className="hover-zone">{hoveredCity.zone}</span>
                 </div>
               </div>
             )}
@@ -238,37 +352,125 @@ const GeographicView = ({ geographicZones, avgMinSalary, avgMaxSalary }) => {
                 <div className="legend-item">
                   <div
                     className="legend-dot"
-                    style={{ backgroundColor: updatedZones["Zone A"].color }}
+                    style={{
+                      backgroundColor: geographicZones["Zone A"]?.color,
+                    }}
                   ></div>
-                  <span>Zone A (SF Bay Area)</span>
+                  <span>
+                    Zone A{" "}
+                    {selectedCompany === "Snap Inc."
+                      ? "(CA, WA States)"
+                      : "(Premium Areas)"}
+                  </span>
                 </div>
                 <div className="legend-item">
                   <div
                     className="legend-dot"
-                    style={{ backgroundColor: updatedZones["Zone B"].color }}
+                    style={{
+                      backgroundColor: geographicZones["Zone B"]?.color,
+                    }}
                   ></div>
-                  <span>Zone B (Major Metro Areas)</span>
+                  <span>
+                    Zone B{" "}
+                    {selectedCompany === "Atlassian"
+                      ? "(NY, NJ, CT, PA States)"
+                      : selectedCompany === "Asana"
+                      ? "(CT, NJ States)"
+                      : "(Major Metro Areas)"}
+                  </span>
                 </div>
                 <div className="legend-item">
                   <div
                     className="legend-dot"
-                    style={{ backgroundColor: updatedZones["Zone C"].color }}
+                    style={{
+                      backgroundColor: geographicZones["Zone C"]?.color,
+                    }}
                   ></div>
-                  <span>Zone C (All Other Areas)</span>
+                  <span>Zone C (All Other States)</span>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="map-note">
-            💡 The map shows the three geographic pay zones. Zone A (San
-            Francisco Bay Area) commands the highest salaries, followed by Zone
-            B (major metropolitan areas), with Zone C representing all other
-            areas at market rates.
+        {/* State/Zone Information */}
+        <div className="zone-details">
+          <div className="zone-detail">
+            <h3>{selectedCompany} Zone Details</h3>
+            {Object.entries(geographicZones).map(([zone, data]) => (
+              <div key={zone} className="zone-detail-card">
+                <h4 style={{ color: data.color }}>
+                  {zone}: {data.description}
+                </h4>
+                <p>
+                  <strong>States:</strong>{" "}
+                  {companyStateZones[selectedCompany][zone].length > 0
+                    ? companyStateZones[selectedCompany][zone].join(", ")
+                    : "None"}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Detailed Zone Information */}
+        {/* Company-specific notes */}
+        <div className="zone-details">
+          <div className="zone-detail-card">
+            <h4>Important Notes</h4>
+            {selectedCompany === "Atlassian" && (
+              <p>
+                • <strong>State-based zones:</strong> Zone B includes NY, NJ,
+                CT, PA (blue states).
+                <br />• <strong>City markers:</strong> Show specific cities
+                colored by their zone (dots on map).
+                <br />• <strong>Example:</strong> California is Zone C (green),
+                but SF Bay Area cities are Zone A (red dots).
+              </p>
+            )}
+            {selectedCompany === "Snap Inc." && (
+              <p>
+                • <strong>State-based zones:</strong> Zone A includes CA and WA
+                (red states).
+                <br />• <strong>City markers:</strong> Show specific cities
+                colored by their zone (dots on map).
+                <br />• <strong>Example:</strong> Austin, TX is Zone B (blue
+                dot) even though Texas is Zone C (green state).
+              </p>
+            )}
+            {selectedCompany === "Asana" && (
+              <p>
+                • <strong>State-based zones:</strong> Zone B includes CT and NJ
+                (blue states).
+                <br />• <strong>City markers:</strong> Show specific cities
+                colored by their zone (dots on map).
+                <br />• <strong>Example:</strong> New York State is Zone C
+                (green), but NYC metro is Zone A (red dots).
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* City List */}
+        <div className="zone-details">
+          <div className="zone-detail-card">
+            <h4>City Markers by Zone</h4>
+            {Object.entries(geographicZones).map(([zone, data]) => {
+              const citiesInZone = cityMarkers.filter(
+                (city) => city.zone === zone
+              );
+              return citiesInZone.length > 0 ? (
+                <div key={zone}>
+                  <h5 style={{ color: data.color, margin: "10px 0 5px 0" }}>
+                    {zone} Cities ({citiesInZone.length}):
+                  </h5>
+                  <p style={{ margin: "0 0 10px 0", fontSize: "14px" }}>
+                    {citiesInZone.map((city) => city.name).join(", ")}
+                  </p>
+                </div>
+              ) : null;
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

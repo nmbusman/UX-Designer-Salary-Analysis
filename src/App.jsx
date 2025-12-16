@@ -4,7 +4,11 @@ import ChartView from "./components/ChartView";
 import TableView from "./components/TableView";
 import SummaryView from "./components/SummaryView";
 import GeographicView from "./components/GeographicView";
-import { jobData, geographicZones } from "./utils/data";
+import {
+  jobData,
+  companyGeographicZones,
+  companyCityCoordinates,
+} from "./utils/data";
 import {
   calculateStatistics,
   calculateMarketPositions,
@@ -208,7 +212,7 @@ function App() {
     [chartHeight, margin]
   );
 
-  // Event handlers - MOVE THE HOOK LOGIC HERE
+  // Event handlers
   const handleMouseMove = useCallback(
     (e) => {
       if (!svgRef.current) return;
@@ -345,9 +349,8 @@ function App() {
 
         {activeTab === "geographic" && (
           <GeographicView
-            geographicZones={geographicZones}
-            avgMinSalary={avgMinSalary}
-            avgMaxSalary={avgMaxSalary}
+            companyGeographicZones={companyGeographicZones}
+            companyCityCoordinates={companyCityCoordinates}
           />
         )}
       </main>
