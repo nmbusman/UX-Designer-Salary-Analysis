@@ -38,6 +38,15 @@ const Header = ({ activeTab, setActiveTab }) => {
         >
           🗺️ Geographic Pay Zones
         </button>
+        {/* Added Methodology tab */}
+        <button
+          className={`tab-button ${
+            activeTab === "methodology" ? "active" : ""
+          }`}
+          onClick={() => setActiveTab("methodology")}
+        >
+          🧮 Methodology & Math
+        </button>
       </div>
     </div>
   );

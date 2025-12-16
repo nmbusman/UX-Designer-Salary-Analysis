@@ -4,6 +4,7 @@ import ChartView from "./components/ChartView";
 import TableView from "./components/TableView";
 import SummaryView from "./components/SummaryView";
 import GeographicView from "./components/GeographicView";
+import SalaryCalculationsExplanation from "./components/SalaryCalculationsExplanation"; // Added import
 import {
   jobData,
   companyGeographicZones,
@@ -353,6 +354,9 @@ function App() {
             companyCityCoordinates={companyCityCoordinates}
           />
         )}
+
+        {/* Added Methodology view */}
+        {activeTab === "methodology" && <SalaryCalculationsExplanation />}
       </main>
     </div>
   );
