@@ -1,0 +1,181 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, sans-serif;
+  background-color: #f9fafb;
+}
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f9fafb;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  overflow: hidden;
+  min-height: 600px;
+}
+
+.chart-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.chart-controls {
+  width: 100%;
+  max-width: 1000px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.legend-section {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.controls-section {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.control-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.control-label input {
+  cursor: pointer;
+}
+
+.chart-hints {
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.chart-hints small {
+  font-size: 12px;
+}
+
+.chart-container {
+  width: 1000px;
+  height: 1000px;
+  position: relative;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: white;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+.chart-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.point-hit-area {
+  cursor: pointer;
+}
+
+.point-circle {
+  cursor: pointer;
+}
+
+.point-label {
+  pointer-events: none;
+}
+
+.overlap-line {
+  pointer-events: none;
+}
+
+.hover-ring {
+  pointer-events: none;
+}
+
+.hover-pulse {
+  pointer-events: none;
+}
+
+.average-lines,
+.median-lines,
+.diagonal-line {
+  pointer-events: none;
+}
+
+/* Chart Quadrant Labels */
+.chart-quadrant-label {
+  text-anchor: middle;
+  font-size: 14px;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.quadrant-above {
+  fill: #2563eb;
+}
+
+.quadrant-below {
+  fill: #dc2626;
+}
+
+.quadrant-mixed {
+  fill: #ca8a04;
+}
+
+.your-job-point {
+  cursor: pointer;
+}
+
+.your-job-circle {
+  cursor: pointer;
+}

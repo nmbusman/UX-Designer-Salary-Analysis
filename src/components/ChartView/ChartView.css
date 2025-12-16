@@ -1,0 +1,151 @@
+.chart-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.chart-controls {
+  width: 100%;
+  max-width: 1000px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.legend-section {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.controls-section {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.control-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  color: #374151;
+}
+
+.control-label input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.chart-hints {
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 1000px;
+  line-height: 1.5;
+}
+
+.chart-hints small {
+  font-size: 12px;
+  display: block;
+  margin-top: 4px;
+}
+
+.chart-hints strong {
+  color: #374151;
+}
+
+.chart-container {
+  width: 1000px;
+  height: 1000px;
+  position: relative;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: white;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+.chart-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.point-hit-area {
+  cursor: pointer;
+  fill: transparent;
+}
+
+.point-circle {
+  cursor: pointer;
+  transition: fill-opacity 0.2s, stroke-width 0.2s;
+}
+
+.point-label {
+  pointer-events: none;
+  user-select: none;
+}
+
+.overlap-line {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.hover-ring {
+  pointer-events: none;
+  fill: none;
+}
+
+.hover-pulse {
+  pointer-events: none;
+  fill: none;
+  opacity: 0.5;
+}
+
+.average-lines line,
+.median-lines line {
+  pointer-events: none;
+}
+
+.diagonal-line {
+  pointer-events: none;
+}
+
+.your-job-circle {
+  cursor: pointer;
+  transition: fill-opacity 0.2s, stroke-width 0.2s;
+}

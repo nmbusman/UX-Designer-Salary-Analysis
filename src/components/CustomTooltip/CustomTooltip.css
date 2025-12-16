@@ -1,0 +1,57 @@
+.custom-tooltip {
+  position: fixed;
+  background-color: white;
+  padding: 16px;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  width: 350px;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translateY(-100%);
+}
+
+.tooltip-company {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 6px;
+  color: #1f2937;
+}
+
+.tooltip-title {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+.tooltip-salary {
+  margin-bottom: 12px;
+}
+
+.salary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.salary-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.salary-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.salary-comparison {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+}

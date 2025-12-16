@@ -1,0 +1,48 @@
+.header-container {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #1f2937;
+}
+
+.header-description {
+  font-size: 16px;
+  margin-bottom: 32px;
+  color: #6b7280;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.tabs-container {
+  display: flex;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.tab-button {
+  padding: 12px 28px;
+  font-weight: 600;
+  border-bottom: 3px solid transparent;
+  color: #6b7280;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+  margin-bottom: -1px;
+}
+
+.tab-button:hover {
+  color: #2563eb;
+}
+
+.tab-button.active {
+  color: #2563eb;
+  border-bottom-color: #3b82f6;
+}

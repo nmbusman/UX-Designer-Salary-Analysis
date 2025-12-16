@@ -1,0 +1,314 @@
+.geographic-view {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.geographic-container {
+  background-color: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.geographic-container h2 {
+  margin-bottom: 20px;
+  color: #1f2937;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 10px;
+}
+
+.zone-intro p {
+  font-size: 15px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.zone-legend {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.zone-card {
+  flex: 1;
+  min-width: 200px;
+  padding: 16px;
+  border-radius: 8px;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.zone-card.hovered {
+  transform: translateY(-4px);
+}
+
+.zone-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.zone-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.zone-description {
+  margin: 0 0 8px 0;
+  font-weight: 600;
+  color: #374151;
+}
+
+.zone-adjustment,
+.zone-range,
+.zone-cities {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.map-section {
+  background-color: #f8fafc;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+  border: 1px solid #e5e7eb;
+}
+
+.map-section h3 {
+  margin-bottom: 16px;
+  color: #374151;
+  font-size: 18px;
+}
+
+.map-container {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.us-map {
+  width: 100%;
+  height: 400px;
+  background-color: #f1f5f9;
+  border-radius: 8px;
+}
+
+.map-legend {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: white;
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.legend-title {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.map-note {
+  font-size: 13px;
+  color: #6b7280;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.zone-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.zone-detail-card {
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.zone-detail-card h4 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.zone-detail-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.zone-detail-section {
+  margin-bottom: 12px;
+}
+
+.detail-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.detail-value {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.detail-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.detail-list {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.employer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.employer-tag {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin: 0 4px 4px 0;
+  font-size: 12px;
+}
+
+.more-employers {
+  font-size: 12px;
+}
+
+.zone-comparison {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.comparison-header {
+  background-color: #f3f4f6;
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.comparison-header h4 {
+  margin: 0;
+  color: #374151;
+  font-size: 16px;
+}
+
+.comparison-header p {
+  margin: 8px 0 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.comparison-table th {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  color: #374151;
+  background-color: #f9fafb;
+}
+
+.comparison-table .text-right {
+  text-align: right;
+}
+
+.comparison-table .text-center {
+  text-align: center;
+}
+
+.comparison-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.hovered-row {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.adjustment-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.geographic-insights {
+  padding: 20px;
+  background-color: #f0f9ff;
+  border-radius: 8px;
+  border: 1px solid #bae6fd;
+}
+
+.geographic-insights h4 {
+  margin: 0 0 12px 0;
+  color: #0369a1;
+  font-size: 16px;
+}
+
+.insights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.insights-list p {
+  margin: 0;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.insight-note {
+  margin-top: 12px !important;
+  font-size: 14px !important;
+  color: #374151 !important;
+  font-weight: 600 !important;
+}
