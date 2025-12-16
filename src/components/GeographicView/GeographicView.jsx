@@ -1,8 +1,15 @@
 import React, { useState } from "react";
+import {
+  ComposableMap,
+  Geographies,
+  Geography,
+  Marker,
+} from "react-simple-maps";
 import "./GeographicView.css";
 
 const GeographicView = ({ geographicZones, avgMinSalary, avgMaxSalary }) => {
   const [hoveredZone, setHoveredZone] = useState(null);
+  const [hoveredState, setHoveredState] = useState(null);
 
   // Update salary ranges in zones
   const updatedZones = { ...geographicZones };
@@ -32,15 +39,56 @@ const GeographicView = ({ geographicZones, avgMinSalary, avgMaxSalary }) => {
     },
   };
 
-  // Simplified US states data for the map
-  const usStates = [
-    { id: "CA", zone: "A/B", fill: "#dc2626", name: "California" },
-    { id: "WA", zone: "B", fill: "#93c5fd", name: "Washington" },
-    { id: "OR", zone: "B", fill: "#93c5fd", name: "Oregon" },
-    { id: "NY", zone: "B", fill: "#93c5fd", name: "New York" },
-    { id: "MA", zone: "B", fill: "#93c5fd", name: "Massachusetts" },
-    // Add more states as needed
+  // Pay zone logic
+  const zoneAStates = ["California"];
+  const zoneBStates = [
+    "Washington",
+    "Oregon",
+    "New York",
+    "Massachusetts",
+    "Connecticut",
+    "Rhode Island",
+    "New Hampshire",
+    "Maryland",
+    "District of Columbia",
+    "Virginia",
+    "New Jersey",
+    "Pennsylvania",
+    "Illinois",
+    "Texas",
+    "Colorado",
+    "Georgia",
   ];
+
+  // City markers
+  const cityMarkers = [
+    { name: "Seattle", coordinates: [-122.3321, 47.6062], zone: "B" },
+    { name: "Portland", coordinates: [-122.6784, 45.5152], zone: "B" },
+    { name: "San Francisco", coordinates: [-122.4194, 37.7749], zone: "A" },
+    { name: "San Jose", coordinates: [-121.8863, 37.3382], zone: "A" },
+    { name: "Los Angeles", coordinates: [-118.2437, 34.0522], zone: "B" },
+    { name: "San Diego", coordinates: [-117.1611, 32.7157], zone: "B" },
+    { name: "Sacramento", coordinates: [-121.4944, 38.5816], zone: "B" },
+    { name: "New York City", coordinates: [-74.006, 40.7128], zone: "B" },
+    { name: "Boston", coordinates: [-71.0589, 42.3601], zone: "B" },
+    { name: "Washington DC", coordinates: [-77.0369, 38.9072], zone: "B" },
+    { name: "Chicago", coordinates: [-87.6298, 41.8781], zone: "B" },
+    { name: "Austin", coordinates: [-97.7431, 30.2672], zone: "B" },
+    { name: "Denver", coordinates: [-104.9903, 39.7392], zone: "B" },
+    { name: "Atlanta", coordinates: [-84.388, 33.749], zone: "B" },
+  ];
+
+  const getFillColor = (stateName) => {
+    if (zoneAStates.includes(stateName)) return updatedZones["Zone A"].color;
+    if (zoneBStates.includes(stateName)) return updatedZones["Zone B"].color;
+    return updatedZones["Zone C"].color;
+  };
+
+  const getZoneLabel = (stateName) => {
+    if (zoneAStates.includes(stateName)) return "Zone A";
+    if (zoneBStates.includes(stateName)) return "Zone B";
+    return "Zone C";
+  };
 
   return (
     <div className="geographic-view">
@@ -64,7 +112,7 @@ const GeographicView = ({ geographicZones, avgMinSalary, avgMaxSalary }) => {
               className={`zone-card ${hoveredZone === zone ? "hovered" : ""}`}
               style={{
                 backgroundColor: data.bgColor,
-                border: `2px solid ${data.color}`,
+                borderColor: data.color,
               }}
               onMouseEnter={() => setHoveredZone(zone)}
               onMouseLeave={() => setHoveredZone(null)}
@@ -95,52 +143,94 @@ const GeographicView = ({ geographicZones, avgMinSalary, avgMaxSalary }) => {
         <div className="map-section">
           <h3>US Geographic Pay Zone Map</h3>
           <div className="map-container">
-            <svg className="us-map" viewBox="0 0 400 250">
-              {/* Simplified US map - in practice you'd want a proper SVG map */}
-              <rect width="400" height="250" fill="#f1f5f9" rx="8" />
+            <ComposableMap
+              projection="geoAlbersUsa"
+              projectionConfig={{
+                scale: 1000,
+              }}
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+            >
+              <Geographies geography="https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json">
+                {({ geographies }) =>
+                  geographies.map((geo) => {
+                    const stateName = geo.properties.name;
 
-              {/* West Coast */}
-              <path
-                d="M50,50 L100,50 L100,100 L50,100 Z"
-                fill="#93c5fd"
-                stroke="#fff"
-              />
-              <text x="75" y="75" fill="#2563eb" fontSize="10">
-                Zone B
-              </text>
+                    return (
+                      <Geography
+                        key={geo.rsmKey}
+                        geography={geo}
+                        fill={getFillColor(stateName)}
+                        stroke="#ffffff"
+                        strokeWidth={1}
+                        style={{
+                          default: { outline: "none" },
+                          hover: {
+                            fill: getFillColor(stateName),
+                            opacity: 0.8,
+                            cursor: "pointer",
+                          },
+                          pressed: { outline: "none" },
+                        }}
+                        onMouseEnter={() => {
+                          setHoveredState(stateName);
+                        }}
+                        onMouseLeave={() => {
+                          setHoveredState(null);
+                        }}
+                      />
+                    );
+                  })
+                }
+              </Geographies>
 
-              {/* California */}
-              <path
-                d="M50,100 L150,100 L150,200 L50,200 Z"
-                fill="#dc2626"
-                stroke="#fff"
-              />
-              <text x="100" y="150" fill="#fff" fontSize="10">
-                Zone A
-              </text>
+              {/* City markers */}
+              {cityMarkers.map(({ name, coordinates, zone }) => (
+                <Marker key={name} coordinates={coordinates}>
+                  <circle
+                    r={zone === "A" ? 5 : 4}
+                    fill={
+                      zone === "A"
+                        ? updatedZones["Zone A"].color
+                        : updatedZones["Zone B"].color
+                    }
+                    stroke="#ffffff"
+                    strokeWidth={1.5}
+                  />
+                  {zone === "A" && (
+                    <text
+                      textAnchor="middle"
+                      y={-12}
+                      className="city-label"
+                      style={{
+                        fill: updatedZones["Zone A"].color,
+                      }}
+                    >
+                      {name}
+                    </text>
+                  )}
+                </Marker>
+              ))}
+            </ComposableMap>
 
-              {/* Rest of US */}
-              <path
-                d="M150,50 L350,50 L350,200 L150,200 Z"
-                fill="#86efac"
-                stroke="#fff"
-              />
-              <text x="250" y="125" fill="#16a34a" fontSize="10">
-                Zone C
-              </text>
-
-              {/* Labels */}
-              <text
-                x="200"
-                y="20"
-                fontSize="14"
-                fontWeight="bold"
-                fill="#374151"
-                textAnchor="middle"
-              >
-                Continental United States - Pay Zones
-              </text>
-            </svg>
+            {/* Hover info */}
+            {hoveredState && (
+              <div className="map-hover-info">
+                <div className="hover-state">
+                  <strong>{hoveredState}</strong>
+                  <span className="hover-zone">
+                    {getZoneLabel(hoveredState)}
+                  </span>
+                </div>
+                <div className="hover-salary">
+                  Estimated salary:{" "}
+                  {updatedZones[getZoneLabel(hoveredState)]?.salaryRange ||
+                    "Market rate"}
+                </div>
+              </div>
+            )}
 
             <div className="map-legend">
               <div className="legend-title">Map Legend</div>
@@ -148,23 +238,23 @@ const GeographicView = ({ geographicZones, avgMinSalary, avgMaxSalary }) => {
                 <div className="legend-item">
                   <div
                     className="legend-dot"
-                    style={{ backgroundColor: "#dc2626" }}
+                    style={{ backgroundColor: updatedZones["Zone A"].color }}
                   ></div>
                   <span>Zone A (SF Bay Area)</span>
                 </div>
                 <div className="legend-item">
                   <div
                     className="legend-dot"
-                    style={{ backgroundColor: "#93c5fd" }}
+                    style={{ backgroundColor: updatedZones["Zone B"].color }}
                   ></div>
-                  <span>Zone B States</span>
+                  <span>Zone B (Major Metro Areas)</span>
                 </div>
                 <div className="legend-item">
                   <div
                     className="legend-dot"
-                    style={{ backgroundColor: "#86efac" }}
+                    style={{ backgroundColor: updatedZones["Zone C"].color }}
                   ></div>
-                  <span>Zone C States</span>
+                  <span>Zone C (All Other Areas)</span>
                 </div>
               </div>
             </div>
@@ -179,156 +269,6 @@ const GeographicView = ({ geographicZones, avgMinSalary, avgMaxSalary }) => {
         </div>
 
         {/* Detailed Zone Information */}
-        <div className="zone-details">
-          {Object.entries(updatedZones).map(([zone, data]) => (
-            <div
-              key={zone}
-              className="zone-detail-card"
-              style={{ backgroundColor: data.bgColor }}
-            >
-              <h4 style={{ color: data.color }}>
-                <div
-                  className="zone-detail-dot"
-                  style={{ backgroundColor: data.color }}
-                ></div>
-                {zone}: {data.description}
-              </h4>
-
-              <div className="zone-detail-section">
-                <div className="detail-label">Salary Adjustment</div>
-                <div className="detail-value" style={{ color: data.color }}>
-                  {data.salaryAdjustment}
-                </div>
-                <div className="detail-subtitle">
-                  Estimated: {data.salaryRange}
-                </div>
-              </div>
-
-              <div className="zone-detail-section">
-                <div className="detail-label">Key Cities</div>
-                <div className="detail-list">
-                  {data.cities.map((city, index) => (
-                    <div key={index}>• {city}</div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="zone-detail-section">
-                <div className="detail-label">Typical Employers</div>
-                <div className="employer-tags">
-                  {data.keyEmployers.slice(0, 3).map((employer, index) => (
-                    <span
-                      key={index}
-                      className="employer-tag"
-                      style={{
-                        backgroundColor: `${data.color}20`,
-                        borderColor: `${data.color}40`,
-                        color: data.color,
-                      }}
-                    >
-                      {employer}
-                    </span>
-                  ))}
-                  {data.keyEmployers.length > 3 && (
-                    <span
-                      className="more-employers"
-                      style={{ color: data.color }}
-                    >
-                      +{data.keyEmployers.length - 3} more
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Salary Comparison Table */}
-        <div className="zone-comparison">
-          <div className="comparison-header">
-            <h4>Salary Comparison by Geographic Zone</h4>
-            <p>
-              Based on market average of ${avgMinSalary.toLocaleString()} - $
-              {avgMaxSalary.toLocaleString()}
-            </p>
-          </div>
-
-          <table className="comparison-table">
-            <thead>
-              <tr>
-                <th>Zone</th>
-                <th>Description</th>
-                <th className="text-right">Estimated Min Salary</th>
-                <th className="text-right">Estimated Max Salary</th>
-                <th className="text-center">Adjustment</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(updatedZones).map(([zone, data]) => (
-                <tr
-                  key={zone}
-                  className={hoveredZone === zone ? "hovered-row" : ""}
-                  onMouseEnter={() => setHoveredZone(zone)}
-                  onMouseLeave={() => setHoveredZone(null)}
-                >
-                  <td
-                    style={{
-                      color: data.color,
-                      borderLeft: `4px solid ${data.color}`,
-                    }}
-                  >
-                    {zone}
-                  </td>
-                  <td>{data.description}</td>
-                  <td className="text-right">
-                    ${zoneStatistics[zone].avgMinSalary.toLocaleString()}
-                  </td>
-                  <td className="text-right">
-                    ${zoneStatistics[zone].avgMaxSalary.toLocaleString()}
-                  </td>
-                  <td className="text-center">
-                    <span
-                      className="adjustment-badge"
-                      style={{
-                        backgroundColor: data.bgColor,
-                        color: data.color,
-                      }}
-                    >
-                      {data.salaryAdjustment}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Key Insights */}
-        <div className="geographic-insights">
-          <h4>💡 Key Geographic Insights</h4>
-          <div className="insights-list">
-            <p>
-              <strong>Zone A (San Francisco Bay Area):</strong> Commands the
-              highest salaries due to extreme cost of living and concentration
-              of tech giants. Expect 30%+ premium over national averages.
-            </p>
-            <p>
-              <strong>Zone B (Major Metro Areas):</strong> High-cost cities with
-              strong tech presence. Salaries typically 15-25% above national
-              averages to offset living costs.
-            </p>
-            <p>
-              <strong>Zone C (All Other Areas):</strong> Market-rate salaries
-              with lower cost of living. Remote positions often adjust based on
-              employee location rather than company HQ.
-            </p>
-            <p className="insight-note">
-              Note: Many companies now offer "location-based pay" where salary
-              is adjusted based on where you live, not where the company is
-              headquartered.
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   );
